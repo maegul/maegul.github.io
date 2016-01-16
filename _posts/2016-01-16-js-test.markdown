@@ -1,0 +1,174 @@
+---
+published: true
+title: JS Test
+layout: post
+---
+<body>
+
+<svg id="plot" width="500" height="500"></svg>
+
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script> 
+
+var lineData = [{
+  x: 1,
+  y: 5
+}, {
+  x: 20,
+  y: 20
+}, {
+  x: 40,
+  y: 10
+}, {
+  x: 60,
+  y: 40
+}, {
+  x: 80,
+  y: 5
+}, {
+  x: 100,
+  y: 60
+}];
+
+var xMin = d3.min(lineData, function (d) {
+	return d.x;
+});
+
+var xMax = d3.max(lineData, function (d) {
+	return d.x;
+});
+
+var yMin = d3.min(lineData, function (d) {
+	return d.y;
+});
+
+var yMax = d3.max(lineData, function (d) {
+	return d.y;
+});
+
+// console.log(d3.min(lineData, function (d) {
+// 	return d.x;
+// }));
+
+
+// 
+// Plot Frame
+// 
+
+var plot = d3.select('#plot');
+
+var width = parseInt(plot.attr("width")),
+	height = parseInt(plot.attr("height")),
+	axes_buffer = 20, // Buffer separating the axes
+	margins = {
+		top: 20+axes_buffer,
+		right: 20+axes_buffer,
+		bottom: 20,
+		left: 50
+	};
+
+plot.attr('width', width+axes_buffer)
+	.attr('height', height+axes_buffer);
+
+console.log([width, height]);
+
+
+
+// 
+// Axes
+// 
+
+
+// I've put in a buffer (the explicit numbers in the range functions) for both axes here.  Being in the scale appears to affect everything further along in the workflow, including the appearence of the scale despite there being no additional transformation done in the later append call.
+// As each of the data based attribute changes are passed through these scale functions, transformations here will naturally affect all data-driven document changes.
+
+var xScale = d3.scale.linear()
+				.domain([xMin, xMax])
+				.range([margins.left+axes_buffer, width - margins.right+axes_buffer]);
+
+var yScale = d3.scale.linear()
+				.domain([0, yMax])
+
+				// Starts from top left corner!  Minimum value is 'ranged' to the greatest extension 'downward' from the top left corner.  Max value to the least extension from the top left corner.
+
+				.range([height-margins.bottom-axes_buffer, margins.top-axes_buffer]);
+
+var xAxis = d3.svg.axis()
+			.orient('bottom')
+			.scale(xScale);
+
+var yAxis = d3.svg.axis()
+			.orient('left')
+			.scale(yScale);			
+
+
+plot.append('svg:g')
+	.attr('class', 'x axis')
+	.attr('transform', 'translate(0,' + (height - margins.bottom) + ')')
+	.call(xAxis);
+
+plot.append('svg:g')
+	.attr('class', 'y axis')
+	.attr('transform', 'translate(' + margins.left + ',0)')
+	.call(yAxis);
+
+
+
+// 
+// Line Plot
+// 
+
+// Line generator
+
+var line = d3.svg.line()
+				.x(function(d) {
+					return xScale(d.x);
+				})
+				.y(function(d) {
+					return yScale(d.y);
+				})
+				.interpolate('linear'); // And many others
+
+
+// Append svg path with line generator
+
+plot.append('svg:path')
+	.attr('d', line(lineData))
+	.attr('stroke', 'red')
+	.attr('stroke-width', 2)
+	.attr('fill', 'none');
+
+
+// append circles for each data point
+
+circ = plot.selectAll('.circ')
+			.data(lineData);
+
+circ.enter().append('circle')
+			.attr('class', 'circ')
+			.attr('cx', function(d) {
+				return xScale(d.x);
+			})
+			.attr('cy', function(d) {
+				return yScale(d.y);
+			})
+			.attr('r', 8)
+
+// Vague lession here was that using style rather than attr makes things work, and keeping styles that are to be modified out of the CSS but in JS makes things easier.
+
+// In terms of primacy, style (d3/CSS) trumps attribute (d3), irrespective of order of definition.
+			.style('stroke', 'red')
+			.style('stroke-width', 0.1)
+			.attr('stroke-width', 5) // Redundant, as style trumps
+			.on('mouseover', function(){
+				d3.select(this).transition().ease('bounce').duration(750).style('stroke-width', 9);
+			})
+			.on('mouseout', function(){
+				d3.select(this).transition().ease('bounce').duration(750).style('stroke-width', 0.1);	
+			});
+
+
+</script>
+
+
+</body>
