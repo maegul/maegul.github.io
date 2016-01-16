@@ -3,6 +3,8 @@ pygments: true
 markdown: kramdown
 url: http://maegul.github.io
 title: maegul
-tagline: A log of everyday life
-description: My awesome new site
-paginate: 5
+tagline: A Test
+description: A test of TinyPress
+author: Errol Lloyd
+email: errolkjlloyd@gmail.com
+paginate: 3
