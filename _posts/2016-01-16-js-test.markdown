@@ -5,6 +5,27 @@ layout: post
 ---
 A JS test ... below should be some D3
 
+<style>
+
+	text{
+		font: 12px sans-serif;
+	}
+
+	.axis path, .axis line {
+		fill: none;
+		stroke: #000;
+		shape-rendering: crispEdges;
+	}
+
+	.circ{
+		fill: red;
+		stroke-width: 10.1;
+	
+}
+
+
+</style>
+
 <body>
 
 <svg id="plot" width="500" height="500"></svg>
