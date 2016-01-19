@@ -2,6 +2,7 @@
 published: true
 title: Another Plotly test
 layout: post
+date: 2016-01-19 14:40:00
 ---
 Should be a plot below:
 
