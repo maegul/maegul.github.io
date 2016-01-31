@@ -16,4 +16,4 @@ not syntax
 
 <button id="feed">Feed ME!</button>
 
-<% endhighlight %}
+{% endhighlight %}
